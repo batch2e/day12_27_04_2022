@@ -1,0 +1,274 @@
+
+Q Create the table named as employeedetails with the following attributes/fields
+
+id (length 5)====> alphanumeric Primary key
+firstname =====> not null
+middlename
+lastname =====> not null
+designation (Mgr,Asstmgr,programmer)
+department  (Sales,HR,Mkt,Devlopment)
+doj default current date
+basic should be more than 2000
+
+A CREATE TABLE employeedetails(
+id VARCHAR2(5) CONSTRAINT employeedetails_id_pk PRIMARY KEY,
+firstname VARCHAR2(20) CONSTRAINT employeedetails_fn_not_null NOT NULL,
+middlename VARCHAR2(20),
+lastname VARCHAR2(20) CONSTRAINT employeedetails_ln_not_null NOT NULL,
+designation VARCHAR2(25) CONSTRAINT employeedetails_desig_check CHECK (designation IN('Mgr','Asstmgr','programmer')),
+department VARCHAR2(25) CONSTRAINT employeedetails_dept_check CHECK (department IN('Sales','HR','Mkt','Development')),
+doj DATE DEFAULT sysdate,
+basic INTEGER CONSTRAINT employeedetails_basic_check CHECK ( basic > 2000)
+);
+
+Q Insert the first record with all the columns with value.
+
+A INSERT INTO employeedetails VALUES('E0001','Akash','Kumar','Sharma','Mgr','Sales','12-feb-2010',10000);
+OR
+INSERT INTO employeedetails(id,firstname.middlename,lastname,designation,department,doj,basic) VALUES('E0001','Akash','Kumar','Sharma','Mgr','Sales','12-feb-2010',10000);
+
+
+Q Insert the second record with middlename as null.
+ INSERT INTO employeedetails VALUES('E0002','Ravi',null,'Chandran','Mgr','Mkt','16-Oct-2000',15000);
+OR
+INSERT INTO employeedetails(id,firstname.middlename,lastname,designation,department,doj,basic) VALUES('E0002','Ravi','Chandran','Mgr','Mkt','16-Oct-2000',15000);
+
+Q Display id,firstname,basic for employee E0001.
+
+SELECT id,firstname,basic FOR employeedetails WHERE id='E0001';
+
+Q Display the lastname,firstname,doj.
+select lastname, firstname,doj from employeedetails;
+
+
+Q Display the lastname and firstname for employee E0001 and E0002
+
+select lastname, firstname from employeedetails where id='E0001' OR id='E0002';
+OR
+select lastname,firstname from employeedetails where id in('E0001','E0002');
+
+
+Q Display lastname for the employee who is manager in sales department.
+
+SELECT lastname for employeedetails where designation = 'Mgr' and department ='sales';
+
+Q display firstname and lastname for the employee whose middlename is null.
+select firstname,lastname from employeedetails where middlename is null;
+
+Q Display doj for the records WHERE middlename is not null.
+select firstname,lastname from employeedetails where middlename IS NOT null;
+
+
+
+Q Display firstname and lastname for employees other than E0001 and E0002.
+
+select lastname,firstname from employeedetails where id not in('E0001','E0002');
+
+Q Display the firstname and basic where basic ranges within 12000 to 30000 
+( inclusive 12000 and 30000)
+
+select firstname,basic from employeedetails where basic is between 12000 and 30000;
+OR
+select firstname,basic from employeedetails where basic >= 12000 and basic<=30000;
+
+
+Q Display the initial of the firstname and entire lastname for all employees
+  Convert the initial as uppercase and display.
+
+firstname lastname
+Ajith     Sharma
+Sujit     Kumar
+  Sharma,A
+  Kumar,S
+
+ SELECT CONCAT(lastname,CONCAT(',',upper(substr(firstname,1,1)))) FROM employeedetails
+
+--------------------------------------------------------------------------------------------------------------------------
+Q Display the count of employees. 
+ASELECT count(id) count_of_employee FROM employee
+Q Display the sum of salary of all the employees in the employee table.
+A SELECT sum(salary) total_of_basic FROM employee
+Q Display the average salary paid to the employees.
+A SELECT avg(salary) FROM employee
+Q dipslay the maximum salary paid to the employees.
+A SELECT max(salary) FROM employee
+Q display the minimum salary paid to the employees.
+A SELECT min(salary) FROM employee
+Q display min and max salary paid to the employees.
+SELECT min(salary),max(salary) FROM employee;
+---------------------------------------------------------------------------------------------------------------------------------
+/* The below SQL statement will sum up all the basics from all the rows and display */
+
+
+select sum(salary) 
+from employee
+
+/* The below SQL statement will first group the departments and then calculate the sum of salary departmentwise and display
+salary totals */
+select sum(salary)
+from employee
+group by dept
+
+
+/* The below SQL statement will first group the departments and then calculate the sum of salary departmentwise and display
+salary totals alongwith the name of the departments */
+select dept,sum(salary)
+from employee
+group by dept;
+
+/* The below SQL statement is returning unique value for the designations */
+SELECT dept
+FROM employee
+GROUP BY dept;
+
+SELECT DISTINCT dept
+FROM employee;
+
+* Aggregate functions can be used without group by clause.
+* Aggregate functions are used mostly with group by clause.
+---------------------------------------------------------------------------------------------------------
+HAVING clause is used to give condition after grouping the data and with having we use aggregate
+functions ( sum,avg,max,min,count)
+Display the count of employees departmentwise where the count of employees are more than 10.
+  SELECT department,count(id)
+  FROM employeedetails
+  GROUP BY department
+  HAVING count(id)>10
+ department       count(id)
+  Mkt              15
+  Development      20
+Display departmentwise average of basic
+  SELECT department,avg(basic)
+  FROM employeedetails
+  GROUP BY department
+What is the difference between WHERE and HAVING as both seems to be used for filtering or 
+restricting the rows?
+A Where clause is applied while giving condition to each of the records and accordingly
+ display the records whereas having is used to give condition or restriction after
+ grouping the data.  
+ We use where with the requirements like
+ Display the records of all the managers.
+ Display the records where the basic is more than 12000.
+ Display the records where middlename is null.
+ Display the records who joined the company in the year 2010.
+ Display the records who joined the company between 2010 and 2020.
+ Display the record who joined the company not betwwn 2010 and 2020.
+ We use having with the requirements like
+ Display the departmentwise count of employees where the count is more than 5.
+ Display the departmentwise average of basic pay where the average is more than 20000.
+Q Can we use where and haing in a single SQL statement?
+A Yes
+ Display the designationwise count for the employees from sales department  and display for 
+ the designation where the count is more than 10.
+
+ SELECT designation,count(id)
+ FROM employeedetails
+ WHERE department='Sales'
+ GROUP BY designation
+ HAVING count(id)>10;
+ 
+* GROUP BY clause should contain all non-aggregate columns that are present in SELECT clause
+  Example
+    SELECT designation,count(id)
+    FROM employeedetails
+    GROUP BY designation
+
+  In the above select statement designation is the non aggregate column and id is the aggregate
+  column as we are applying aggregate function on the id.
+   
+
+   If we write the SQL statement as follows, it will be incorrect as name is not present with the
+   group by clause
+   SELECT designation,name,count(id)
+   FROM employeedetails
+   GROUP BY designation
+
+  So the correct way of writing should be
+    SELECT designation,name,count(id)
+   FROM employeedetails
+   GROUP BY designation,name
+
+  /* If we dont mention a non aggregate column in the select but it can be used in group by clause */
+        2   
+        3
+        4
+   SELECT count(id)
+   FROM employeedetails
+   GROUP BY designation
+-----------------------------------------------------------------------------------------------------
+* GROUP BY clause should be mandatory when there is a list of aggregate and non-aggregate columns in SELECT statement
+The following statement will be incorrect:
+SELECT designation,count(id)
+    FROM employeedetails
+------------------------------------------------------------------------------------------------------
+Whenever nested aggregate columns appear in the SELECT clause, GROUP BY clause should be mandatorily used.
+The below statement is incorrect
+SELECT MAX(AVG(basic)) 
+FROM employeedetails
+
+Depatmentwise average basic
+  SELECT department,AVG(basic)
+  FROM employeedetails
+  GROUP BY department
+
+  sales 120000
+  mkt   230000
+  hr    500000
+
+Display the maximum average of basic pay departmentwise
+
+   SELECT MAX(AVG(basic))
+   FROM employeedetails
+   GROUP BY department
+------------------------------------------------------------------------------------------------- 
+ * HAVING cannot be written without the GROUP BY clause in the query.
+
+    SELECT department,count(id)
+    FROM employeedetails
+    GROUP BY department
+    HAVING count(id)>5
+    
+  WE cannot write
+SELECT department,count(id)
+    FROM employeedetails
+    HAVING count(id)>5
+------------------------------------------------------------------------------------------------
+   * Aggregate column condition(s) should always be written along with the HAVING clause and not with the WHERE clause
+
+The following statement will be incorrect 
+    SELECT department,count(id)
+    FROM employeedetails
+    WHERE count(id)>5
+    GROUP BY department
+-----------------------------------------------------------------------------------------------------
+* Columns from the list of the SELECT clause should not be skipped in the GROUP BY clause. However, you can add an extra non-aggregate column which is not present in the SELECT to the GROUP BY clause
+
+   SELECT MAX(AVG(basic))
+   FROM employeedetails
+   GROUP BY department
+
+    500000
+-------------------------------------------------------------------------------------------------
+* GROUP BY clause should not contain any aggregate columns
+The following statement will go wrong
+ SELECT department,count(id)
+    FROM employeedetails
+    GROUP BY id
+-------------------------------------------------------------------------
+Aliased name given for the column should not be used in GROUP BY clause
+
+The following SQL is incorrect:
+
+ SELECT department dept,count(id)
+    FROM employeedetails
+    GROUP BY dept
+---------------------------------------------------------------------
+HAVING clause should not contain non-aggregate columns which are not present in the GROUP BY clause
+
+The following statement will go incorrect
+ SELECT department,count(id)
+    FROM employeedetails
+    GROUP BY department
+    HAVING count(name)>5
+--------------------------------------------------------------------------------------------
+select to_char(sldate,'Month') MONTH, count(*) NUMBER_SALE from sale group by to_char(sldate,'Month') order by  2 desc
