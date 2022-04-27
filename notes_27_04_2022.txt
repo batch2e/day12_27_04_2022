@@ -272,3 +272,51 @@ The following statement will go incorrect
     HAVING count(name)>5
 --------------------------------------------------------------------------------------------
 select to_char(sldate,'Month') MONTH, count(*) NUMBER_SALE from sale group by to_char(sldate,'Month') order by  2 desc
+-------------------------------------------------------------------------------------------------------------------------------
+SELECT id,ename,compid,model
+FROM employee INNER JOIN computer
+ON employee.compid=computer.compid 
+
+ORA-00918: column ambiguously defined
+[ compid is in both the tables. So when we mentioned compid in the 
+select statement , database engine is unable to interpret that
+from which table we want to see the compid ]
+-----------------------------------------------------------------
+
+
+SELECT id,ename,computer.compid,model
+FROM employee INNER JOIN computer
+ON employee.compid=computer.compid 
+
+--------------------------------------------------------------
+SELECT id,ename,c.compid,model
+FROM employee e INNER JOIN computer c
+ON e.compid=c.compid 
+OR
+SELECT id,ename,e.compid,model
+FROM employee e INNER JOIN computer c
+ON e.compid=c.compid 
+OR
+SELECT id,ename,e.compid,model
+FROM employee e JOIN computer c
+ON e.compid=c.compid 
+--------------------------------------------------
+    employee
+id    ename     compid    
+1     Ravi      C0001
+2     Ashok     C0002
+3     Suresh    null
+
+computer 
+compid     name
+C0001      HP
+C0002      DELL
+
+
+SELECT id,ename,emp.compid,name
+FROM employee emp LEFT OUTER JOIN computer comp
+ON emp.compid=comp.compid
+1   Ravi   C0001  HP
+2   Ashok  C0002  DELL
+3   Suresh null   null
+   
