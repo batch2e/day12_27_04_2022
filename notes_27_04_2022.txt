@@ -319,4 +319,116 @@ ON emp.compid=comp.compid
 1   Ravi   C0001  HP
 2   Ashok  C0002  DELL
 3   Suresh null   null
-   
+----------------------------------------------------------------------------------------------------------------------------
+Create table patient(
+patientid varchar2(5) primary key check(patientid like 'P%'),
+pname varchar2(15) not null,
+city varchar2(15)
+);
+Insert into patient values('P101','Kevin','New York');
+Insert into patient values('P102','Merlin','Boston');
+Insert into patient values('P103','Eliza','Chicago');
+Insert into patient values('P104','Robert','New York');
+Insert into patient values('P105','David','Chicago');
+
+Create table doctor (
+doctorid varchar2(5) primary key check(doctorid like 'D%'),
+dname  VARCHAR2(20),
+dept  VARCHAR2(20),
+salary NUMBER);
+
+Insert into doctor values ('D201','Jane', 'Cardiology', 150000);
+Insert into doctor values ('D202','Maria', 'Nephrology', 110000);
+Insert into doctor values ('D203','John', 'Cardiology', 160000);
+Insert into doctor values ('D204','Jack', 'Neurology', 125000);
+
+
+Create table consultation(
+consultationid number primary key,
+patientid varchar2(5) references patient(patientid),
+doctorid varchar2(5) references doctor(doctorid),
+fee number
+);
+
+
+Insert into consultation values(501,'P101','D204',500);
+Insert into consultation values(502,'P102','D201',600);
+Insert into consultation values(503,'P103','D202',450);
+Insert into consultation values(504,'P104','D203',550);
+Insert into consultation values(505,'P105','D203',550);
+Insert into consultation values(506,'P101','D202',450);
+
+------------------------------------------------------------------------------------------------------------------------
+Q Display patientid and patientname.
+
+Q Display patientid patientname and city
+
+Q Display patientid and patientname who are from the city Boston. 
+
+Q Display patientid,patientname,city for patients who are either from New York or from Boston.
+
+
+
+Q Display patientid,patiendname who are not from new york or boston
+
+
+Q Display the city and number of patients from that city . Counting of patient column should have the alias name as
+  patient_count.
+
+Q  Display the number of patients.
+
+Q Display the number of patients who from boston or new york.
+
+  
+Q Display the number of patients citywise but display the patients who are from boston and new york only.
+
+
+
+Q display the patientid and patientname whose name is having e. 
+
+
+Q count the number of patients whose name is having e.
+
+Q count the number of patients whose name is not having e.
+
+ 
+Q display the city and the count of patients from that city where the count is more than 1.
+
+Q Count the number of cardiologist.
+
+Q Count the number of doctors excluding cardiologist. 
+
+
+Q Display patientid, patientname and consultation fee.
+
+
+
+Q display patientid and total consultation fee given by the patient
+
+   P0001       400
+   P0002       200
+   P0001       200
+   P0002       100
+
+Q display patientid and total consultation fee where the total consultation fee is more than 2000.
+
+Q display patientid and total consultation fee in descending order of the total consultation fee.
+
+Q display patientid,pname,doctorid,dname. 
+
+
+Q display doctorid  and number of patients doctor has treated.
+
+Q display doctorid and number of patients in the order of least patients treated to most patients treated.
+
+Q display doctor's name and the number of patients treated.
+
+  
+Q display doctor's name and the number of patients treated.Doctors name should be displayed in the order of most patient treated
+  to least patient treated
+
+Q display the doctor's name who had treated the patients of New York.
+ 
+
+Q Display the names of the patients who were treated by the cardiologist.
+ 
